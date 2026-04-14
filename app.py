@@ -4,31 +4,27 @@ import numpy as np
 import plotly.graph_objects as go
 import os
 
+
+MASTER_PASSWORD = "beast"
+USER_MAP = {
+    "fishing": "Bright, Noah",
+    "bsb": "Broski, Adam",
+    "sofi": "Seymour, Randy",
+    "mini": "McKay, Ryan",
+    "illinois": "Murphy, Dayton",
+    "ccc": "Deckinga, CJ",
+    "mafia": "Williams, Nick",
+    "movies": "Sturgess, Isaac",
+    "dude": "Picot, Parker",
+    "vmart": "Rice, Trent",
+    "fours": "Domey, Isaiah",
+    "chicago": "Thomas, Khamaree",
+    "barber": "Elezaj, Anthony",
+}
+
 st.set_page_config(layout="wide")
 
 
-
-PASSWORD = "CatGim"  # change this
-
-def check_password():
-    def password_entered():
-        if st.session_state["password"] == PASSWORD:
-            st.session_state["password_correct"] = True
-        else:
-            st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        st.text_input("Enter Password", type="password", key="password", on_change=password_entered)
-        return False
-    elif not st.session_state["password_correct"]:
-        st.text_input("Enter Password", type="password", key="password", on_change=password_entered)
-        st.error("Incorrect password")
-        return False
-    else:
-        return True
-
-if not check_password():
-    st.stop()
 # ========================
 # LOAD DATA
 # ========================
@@ -46,11 +42,30 @@ df = pd.concat(dfs, ignore_index=True)
 # ========================
 # DROPDOWNS
 # ========================
-hitters = df["Batter"].dropna().unique()
-selected_hitter = st.selectbox("Select Hitter", hitters)
+msu_df = df[df["BatterTeam"] == "MIC_SPA"]
+hitters = msu_df["Batter"].dropna().unique()
+pw = st.text_input("Enter Password", type="password")
 
+if pw == MASTER_PASSWORD:
+    access_level = "master"
+elif pw in USER_MAP:
+    access_level = "player"
+    selected_hitter = USER_MAP[pw]
+else:
+    st.stop()
+
+# ✅ MASTER: can choose hitter
+if access_level == "master":
+    hitters = msu_df["Batter"].dropna().unique()
+    selected_hitter = st.selectbox("Select Hitter", hitters)
+
+# ✅ PLAYER: locked hitter (no dropdown)
+df_hitter = msu_df[msu_df["Batter"] == selected_hitter]
 df_hitter = df[df["Batter"] == selected_hitter]
-
+if access_level == "player":
+    st.title(f"{selected_hitter} Dashboard")
+else:
+    st.title("MSU Hitter Dashboard")
 games = df_hitter["Game"].unique()
 selected_game = st.selectbox("Select Game", games)
 
@@ -105,7 +120,7 @@ st.subheader("Summary")
 
 c1, c2, c3 = st.columns(3)
 c1.metric("AVG", f"{avg:.3f}")
-c2.metric("AB", ab)
+c2.metric("PA", ab)
 c3.metric("Hard Hit%", f"{hard_hit_rate:.1f}%")
 
 c4, c5, c6 = st.columns(3)
@@ -299,3 +314,6 @@ for i, ab_id in enumerate(at_bats):
 
         st.dataframe(table_df, hide_index=True)
         st.markdown("<br>", unsafe_allow_html=True)
+
+
+
