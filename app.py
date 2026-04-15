@@ -66,7 +66,7 @@ df_hitter = df[df["Batter"] == selected_hitter]
 if access_level == "player":
     st.title(f"{selected_hitter} Dashboard (MAKE SURE TO TURN ON LIGHT MODE)")
 else:
-    st.title("MSU Hitter Dashboard")
+    st.title("MSU Hitter Dashboard **TURN ON LIGHT MODE TOP RIGHT CORNER**")
 games = df_hitter["Game"].unique()
 selected_game = st.selectbox("Select Game", games)
 
@@ -148,15 +148,16 @@ pitches = len(df_game)
 pitches_per_ab = len(df_game) / ab if ab else 0
 st.subheader("Summary")
 
-c1, c2, c3, = st.columns(3)
+c1, c2, c3 = st.columns(3)
 c1.metric("AVG", f"{avg:.3f}")
 c2.metric("PA", ab)
 c3.metric("Hard Hit%", f"{hard_hit_rate:.1f}%")
-c4, c2, c3, c4 = st.columns(4)
-c5, c6, c7, c8 = st.columns(4)
+
+c4, c5, c3, c6 = st.columns(3)
 c4.metric("OBP", f"{obp:.3f}")
 c5.metric("Whiff Rate", f"{whiff_rate:.1f}%")
 c6.metric("AVG Pitches/AB", f"{pitches_per_ab:.1f}")
+c7, c8, c9 = st.columns(3)
 c7.metric("BIP AVG", f"{bip_avg:.3f}")
 c8.metric("Avg EV", f"{avg_ev:.1f}")
 st.markdown("<br>", unsafe_allow_html=True)
