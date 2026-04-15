@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import os
+from PIL import Image
 
 
 MASTER_PASSWORD = "beast"
@@ -63,7 +64,7 @@ if access_level == "master":
 df_hitter = msu_df[msu_df["Batter"] == selected_hitter]
 df_hitter = df[df["Batter"] == selected_hitter]
 if access_level == "player":
-    st.title(f"{selected_hitter} Dashboard")
+    st.title(f"{selected_hitter} Dashboard (MAKE SURE TO TURN ON LIGHT MODE)")
 else:
     st.title("MSU Hitter Dashboard")
 games = df_hitter["Game"].unique()
@@ -147,11 +148,11 @@ pitches = len(df_game)
 pitches_per_ab = len(df_game) / ab if ab else 0
 st.subheader("Summary")
 
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3, = st.columns(3)
 c1.metric("AVG", f"{avg:.3f}")
 c2.metric("PA", ab)
 c3.metric("Hard Hit%", f"{hard_hit_rate:.1f}%")
-
+c4, c2, c3, c4 = st.columns(4)
 c5, c6, c7, c8 = st.columns(4)
 c4.metric("OBP", f"{obp:.3f}")
 c5.metric("Whiff Rate", f"{whiff_rate:.1f}%")
@@ -345,6 +346,4 @@ for i, ab_id in enumerate(at_bats):
 
         st.dataframe(table_df, hide_index=True)
         st.markdown("<br>", unsafe_allow_html=True)
-
-
 
