@@ -110,23 +110,54 @@ swings = df_game["PitchCall"].isin([
 
 whiff_rate = (whiffs / swings * 100) if swings else 0
 
-hard_hit = (df_game["ExitSpeed"] >= 95).sum()
-bip = df_game["ExitSpeed"].notna().sum()
+# ========================
+# BIP AVG (Batting Avg on Balls In Play)
+# ========================
+
+bip_df = df_game[df_game["PitchCall"] == "InPlay"]
+
+bip = len(bip_df)
+
+bip_hits = bip_df["PlayResult"].isin([
+    "Single","Double","Triple","HomeRun"
+]).sum()
+
+bip_avg = (bip_hits / bip) if bip else 0
+
+# ========================
+# AVG EXIT VELO
+# ========================
+
+ev_df = df_game[df_game["PitchCall"] == "InPlay"]
+
+avg_ev = ev_df["ExitSpeed"].mean() if len(ev_df) else 0
+# ========================
+# HARD HIT (FINAL CORRECT)
+# ========================
+
+bip_df = df_game[df_game["PitchCall"] == "InPlay"]
+
+bip = len(bip_df)
+
+hard_hit = (bip_df["ExitSpeed"] >= 95).sum()
+
 hard_hit_rate = (hard_hit / bip * 100) if bip else 0
 
 pitches = len(df_game)
-
+pitches_per_ab = len(df_game) / ab if ab else 0
 st.subheader("Summary")
 
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 c1.metric("AVG", f"{avg:.3f}")
 c2.metric("PA", ab)
 c3.metric("Hard Hit%", f"{hard_hit_rate:.1f}%")
 
-c4, c5, c6 = st.columns(3)
+c5, c6, c7, c8 = st.columns(4)
 c4.metric("OBP", f"{obp:.3f}")
 c5.metric("Whiff Rate", f"{whiff_rate:.1f}%")
-c6.metric("Pitches Seen", pitches)
+c6.metric("AVG Pitches/AB", f"{pitches_per_ab:.1f}")
+c7.metric("BIP AVG", f"{bip_avg:.3f}")
+c8.metric("Avg EV", f"{avg_ev:.1f}")
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("### Legend")
 
@@ -151,7 +182,7 @@ pitch_map = {
     "Curveball": "CB",
     "ChangeUp": "CH",
     "Splitter": "SPL",
-    "Cutter": "FC",
+    "Cutter": "CUT",
     "Sweeper": "SW",
     "Knuckleball": "KN"
 }
@@ -163,7 +194,7 @@ pitch_full = {
     "CB": "Curveball",
     "CH": "ChangeUp",
     "SPL": "Splitter",
-    "FC": "Cutter",
+    "CUT": "Cutter",
     "SW": "Sweeper",
     "KN": "Knuckleball"
 }
@@ -305,10 +336,10 @@ for i, ab_id in enumerate(at_bats):
         table_df = pd.DataFrame([{
             "Pitch": pitch_name,
             "Count": count,
-            "Speed": speed,
+            "Pitch Speed": speed,
             "Result": result,
             "Hit Type": hit_type,
-            "Exit Speed": exit_velo,
+            "Exit Velo": exit_velo,
             "Distance": distance
         }])
 
