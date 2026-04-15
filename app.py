@@ -153,7 +153,7 @@ c1.metric("AVG", f"{avg:.3f}")
 c2.metric("PA", ab)
 c3.metric("Hard Hit%", f"{hard_hit_rate:.1f}%")
 
-c4, c5, c3, c6 = st.columns(3)
+c4, c5, c6 = st.columns(3)
 c4.metric("OBP", f"{obp:.3f}")
 c5.metric("Whiff Rate", f"{whiff_rate:.1f}%")
 c6.metric("AVG Pitches/AB", f"{pitches_per_ab:.1f}")
