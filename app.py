@@ -21,6 +21,7 @@ USER_MAP = {
     "fours": "Domey, Isaiah",
     "chicago": "Thomas, Khamaree",
     "barber": "Elezaj, Anthony",
+    "vandy": "Van Ameyde, Cole",
 }
 
 st.set_page_config(layout="wide")
